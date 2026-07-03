@@ -6,36 +6,26 @@
 *
 * ================================================================ */
 
+// Mango
+#include <mango/errors.h>
+#include <mango/util.h>
+#include <mango/controls.h>
+
+// WinAPI
+#include <windows.h>
+
 // STL
 #include <string>
 #include <cstdlib>
 #include <cstdint>
 
-// WinAPI
-#include <windows.h>
-
 namespace mango
 {
-
-	class Window
-	{
-	public:
-		Window(HINSTANCE instance, const std::wstring& title, std::int32_t x, std::int32_t y);
-		Window() = default;
-
-		static LRESULT s_Procedure(HWND handle, UINT msg, WPARAM wp, LPARAM lp);
-
-	private:
-		HINSTANCE m_Instance;
-		HWND m_Handle;
-		std::wstring m_Title;
-		std::int32_t m_X, m_Y;
-	};
 
 	class Application
 	{
 	public:
-		Application(HINSTANCE instance, const std::wstring& title, std::int32_t x, std::int32_t y);
+		Application(HINSTANCE instance, const std::wstring& title, Vec2i size);
 		Application() = default;
 
 		int Run();
