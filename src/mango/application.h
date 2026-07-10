@@ -13,6 +13,7 @@
 #include <mango/util.h>
 #include <mango/controls.h>
 #include <mango/window.h>
+#include <mango/image.h>
 
 // WinAPI
 #include <windows.h>

@@ -18,5 +18,6 @@ namespace mango
 {
 
 	DWORD GetError(const std::wstring& info);
+	void ForceError(const std::wstring& info);
 
 }

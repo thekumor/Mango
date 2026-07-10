@@ -45,6 +45,7 @@ namespace mango
 
 		ShowWindow(m_Handle, SW_SHOW);
 
+		// #Note(kumor): this could be risky due to use of "this".
 		SetWindowLongPtr(m_Handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 	}
 
@@ -66,7 +67,6 @@ namespace mango
 			{
 				Vec2i newSize = { (std::int32_t)LOWORD(lp), (std::int32_t)HIWORD(lp) };
 				Window* window = reinterpret_cast<Window*>(GetWindowLongPtr(handle, GWLP_USERDATA));
-				OutputDebugStringA("test\n");
 
 				if (!window)
 					break;

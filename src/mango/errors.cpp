@@ -27,4 +27,9 @@ namespace mango
 		return error;
 	}
 
+	void ForceError(const std::wstring& info)
+	{
+		MessageBoxW(nullptr, info.c_str(), L"Error", IDOK);
+	}
+
 }

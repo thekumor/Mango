@@ -20,6 +20,8 @@ namespace mango
 
 	int Application::Run()
 	{
+		Image mango("img/mango.jpg");
+
 		Font mainFont(L"Georgia", 24, false, false);
 
 		Text* text = m_Window->AddChild<Text>(L"Hello", { 0.50f, 0.10f }, { 0.25f, 0.10f });
