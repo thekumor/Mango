@@ -7,8 +7,8 @@
 * ================================================================ */
 
 // Mango
-#include <mango/application.h>
 #include <mango/util.h>
+#include <mango/application.h>
 
 // WinAPI
 #include <windows.h>
@@ -21,6 +21,6 @@ static int WINAPI wWinMain(HINSTANCE instance, HINSTANCE prevInstance, PWSTR cmd
 {
 	using namespace mango;
 
-	Application app(instance, L"Mango", Vec2i(MANGO_WIDTH, MANGO_HEIGHT));
+	mango::Application app(instance, L"Mango", Vec2i(MANGO_WIDTH, MANGO_HEIGHT));
 	return app.Run();
 }

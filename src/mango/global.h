@@ -1,22 +1,21 @@
 /* ================================================================
 *
-*	Error management & logging for Win32.
+*	Used for storing global variable symbols.
 *
+*	#Notes: Right now, it does nothing.
+* 
 *	#Authors: The Kumor
 *
 * ================================================================ */
 
 #pragma once
 
-// WinAPI
-#include <windows.h>
-
-// STL
-#include <string>
+// Mango
+#include <mango/application.h>
 
 namespace mango
 {
 
-	DWORD GetError(const std::wstring& info);
+	//extern Application g_App;
 
 }

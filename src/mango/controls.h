@@ -21,6 +21,9 @@
 
 namespace mango
 {
+
+	class Font;
+
 	class Control
 	{
 	public:
@@ -30,11 +33,15 @@ namespace mango
 		template <typename T>
 		T* AddChild(const std::wstring& text, Vec2i size, Vec2i pos)
 		{
-			T* child = (T*)m_Children.emplace_back((Control*)new T(text, size, pos, this));
-			return child;
+			return (T*)m_Children.emplace_back((Control*)new T(text, size, pos, this));
 		}
 
 		Control* GetParent() const { return m_Parent; }
+		Vec2i GetSize() const { return m_Size; }
+		Vec2i GetPos() const { return m_Pos; }
+		void SetFont(Font* font);
+		void SetPos(Vec2i pos);
+		void SetSize(Vec2i size);
 
 		friend class Window;
 		friend class Text;
@@ -46,18 +53,6 @@ namespace mango
 		HWND m_Handle;
 		Vec2i m_Size, m_Pos;
 		std::wstring m_Text;
-	};
-
-	class Window : public Control
-	{
-	public:
-		Window(HINSTANCE instance, const std::wstring& title, Vec2i size);
-		Window() = default;
-
-		static LRESULT s_Procedure(HWND handle, UINT msg, WPARAM wp, LPARAM lp);
-
-	private:
-		HINSTANCE m_Instance;
 	};
 
 	class Text : public Control
@@ -73,4 +68,20 @@ namespace mango
 		Button(const std::wstring& text, Vec2i size, Vec2i pos, Control* parent = nullptr);
 		Button() = default;
 	};
+
+	class Font
+	{
+	public:
+		Font(const std::wstring& name, std::int32_t size, bool bold = false, bool italic = false);
+		Font() = default;
+
+		friend class Control;
+
+	private:
+		HFONT m_Handle;
+		std::wstring m_Name;
+		std::int32_t m_Size;
+		bool m_Bold, m_Italic;
+	};
+
 }
