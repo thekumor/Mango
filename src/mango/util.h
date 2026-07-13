@@ -37,32 +37,32 @@ namespace mango
 			T Y;
 		};
 
-		Vec2 operator=(const Vec2& other)
+		[[nodiscard]] Vec2 operator=(const Vec2& other)
 		{
 			return Vec2(other.x, other.y);
 		}
 
-		bool operator==(const Vec2& other)
+		[[nodiscard]] bool operator==(const Vec2& other)
 		{
 			return X == other.x && Y == other.y;
 		}
 
-		Vec2 operator+(const Vec2& other)
+		[[nodiscard]] Vec2 operator+(const Vec2& other)
 		{
 			return Vec2(X + other.x, Y + other.y);
 		}
 
-		Vec2 operator-(const Vec2& other)
+		[[nodiscard]] Vec2 operator-(const Vec2& other)
 		{
 			return Vec2(X - other.x, Y - other.y);
 		}
 
-		Vec2 operator*(const Vec2& other)
+		[[nodiscard]] Vec2 operator*(const Vec2& other)
 		{
 			return Vec2(X * other.x, Y * other.y);
 		}
 
-		Vec2 operator/(const Vec2& other)
+		[[nodiscard]] Vec2 operator/(const Vec2& other)
 		{
 			return Vec2(X / other.x, Y / other.y);
 		}

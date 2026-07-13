@@ -19,7 +19,6 @@ namespace mango
 			apiClass.hInstance = instance;
 			apiClass.lpszClassName = className;
 			apiClass.cbClsExtra = 0;
-			apiClass.hbrBackground = CreateSolidBrush(RGB(100, 100, 120));
 			apiClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
 			apiClass.lpfnWndProc = Window::s_Procedure;
 
@@ -61,6 +60,19 @@ namespace mango
 			case WM_CLOSE:
 			{
 				DestroyWindow(handle);
+			} break;
+
+			case WM_PAINT:
+			{
+				PAINTSTRUCT ps;
+				RECT rc;
+				static HBRUSH s_Brush = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
+				GetClientRect(handle, &rc);
+				HDC dc = BeginPaint(handle, &ps);
+
+				FillRect(dc, &rc, s_Brush);
+
+				EndPaint(handle, &ps);
 			} break;
 
 			case WM_SIZE:

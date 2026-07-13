@@ -10,6 +10,7 @@
 
 // Mango
 #include <mango/controls.h>
+#include <mango/image.h>
 
 // WinAPI
 #include <windows.h>
@@ -33,7 +34,15 @@ namespace mango
 			Vec2i actualSize = Vec2i((std::int32_t)(size.X * m_Size.X), (std::int32_t)(size.Y * m_Size.Y));
 			Vec2i actualPos = Vec2i((std::int32_t)(pos.X * m_Size.X), (std::int32_t)(pos.Y * m_Size.Y));
 
-			return (T*)Control::AddChild<T>(text, actualSize, actualPos);
+			return dynamic_cast<T*>(Control::AddChild<T>(text, actualSize, actualPos));
+		}
+
+		TextImage* AddTextImage(const std::wstring& altText, const std::string& path, Vec2f size, Vec2f pos)
+		{
+			Vec2i actualSize = Vec2i((std::int32_t)(size.X * m_Size.X), (std::int32_t)(size.Y * m_Size.Y));
+			Vec2i actualPos = Vec2i((std::int32_t)(pos.X * m_Size.X), (std::int32_t)(pos.Y * m_Size.Y));
+
+			return dynamic_cast<TextImage*>(Control::AddTextImage(altText, path, actualSize, actualPos));
 		}
 
 	private:
