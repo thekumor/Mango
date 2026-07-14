@@ -20,6 +20,8 @@ namespace mango
 
 	int Application::Run()
 	{
+		File f(L"img/mango.png", FileMode::Read);
+
 		Font mainFont(L"Georgia", 24, false, false);
 		Font headerFont(L"Georgia", 64, true, false);
 

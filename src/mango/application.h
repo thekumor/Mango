@@ -14,6 +14,7 @@
 #include <mango/controls.h>
 #include <mango/window.h>
 #include <mango/image.h>
+#include <mango/files.h>
 
 // WinAPI
 #include <windows.h>
