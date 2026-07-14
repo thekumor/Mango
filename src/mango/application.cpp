@@ -21,16 +21,13 @@ namespace mango
 	int Application::Run()
 	{
 		Font mainFont(L"Georgia", 24, false, false);
+		Font headerFont(L"Georgia", 64, true, false);
 
-#if 0
-		Text* text = m_Window->AddChild<Text>(L"Hello", { 0.50f, 0.10f }, { 0.25f, 0.10f });
-		text->SetFont(&mainFont);
+		Text* title = m_Window->AddChild<Text>(L"Mango", { 0.50f, 0.10f }, { 0.25f, 0.05f });
+		title->SetFont(&headerFont);
+		title->SetCentered(true);
 
-		Button* btn = m_Window->AddChild<Button>(L"Test", { 0.25f, 0.12f }, { 0.38f, 0.30f });
-		btn->SetFont(&mainFont);
-#endif
-
-		TextImage* img = m_Window->AddTextImage(L"Test", "img/mango.png", { 0.5f, 0.5f }, { 0.1f, 0.1f});
+		TextImage* img = m_Window->AddTextImage(L"Test", "img/mango.png", { 0.25f, 0.25f }, { 0.75f, 0.25f});
 
 		MSG msg = { 0 };
 		while (GetMessageW(&msg, nullptr, 0, 0))

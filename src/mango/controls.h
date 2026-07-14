@@ -43,6 +43,7 @@ namespace mango
 		Vec2i GetSize() const { return m_Size; }
 		Vec2i GetPos() const { return m_Pos; }
 		TextImage* AddTextImage(const std::wstring& altText, const std::string& path, Vec2i size, Vec2i pos, Control* parent = nullptr);
+		Font* GetFont() const { return m_Font; }
 		void SetFont(Font* font);
 		void SetPos(Vec2i pos);
 		void SetSize(Vec2i size);
@@ -53,11 +54,12 @@ namespace mango
 		friend class TextImage;
 
 	protected:
-		Control* m_Parent;
+		Control* m_Parent = nullptr;
 		std::vector<Control*> m_Children;
-		HWND m_Handle;
+		HWND m_Handle = nullptr;
 		Vec2i m_Size, m_Pos;
 		std::wstring m_Text;
+		Font* m_Font = nullptr;
 	};
 
 	class Text : public virtual Control
@@ -65,6 +67,15 @@ namespace mango
 	public:
 		Text(const std::wstring& text, Vec2i size, Vec2i pos, Control* parent = nullptr);
 		Text() = default;
+
+		static WNDCLASSEXW s_Class;
+		static LRESULT s_Procedure(HWND handle, UINT msg, WPARAM wp, LPARAM lp);
+
+		bool IsCentered() const { return m_Center; }
+		void SetCentered(bool center);
+
+	private:
+		bool m_Center = false;
 	};
 
 	class Button : public virtual Control
@@ -94,6 +105,7 @@ namespace mango
 		Font() = default;
 
 		friend class Control;
+		friend class Text;
 
 	private:
 		HFONT m_Handle;

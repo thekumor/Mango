@@ -19,6 +19,7 @@ namespace mango
 	void Control::SetFont(Font* font)
 	{
 		SendMessageW(m_Handle, WM_SETFONT, (LPARAM)font->m_Handle, TRUE);
+		m_Font = font;
 	}
 
 	void Control::SetPos(Vec2i pos)
@@ -33,12 +34,67 @@ namespace mango
 		SetWindowPos(m_Handle, nullptr, 0, 0, size.x, size.y, SWP_NOMOVE | SWP_NOZORDER);
 	}
 
+	WNDCLASSEXW Text::s_Class = { 0 };
+
+	LRESULT Text::s_Procedure(HWND handle, UINT msg, WPARAM wp, LPARAM lp)
+	{
+		switch (msg)
+		{
+			case WM_PAINT:
+			{
+				Text* self = reinterpret_cast<Text*>(GetWindowLongPtrW(handle, GWLP_USERDATA));
+				if (!self)
+					break;
+
+				PAINTSTRUCT ps;
+				RECT rc;
+				GetClientRect(handle, &rc);
+
+				HDC dc = BeginPaint(handle, &ps);
+				FillRect(dc, &rc, reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));
+
+				std::int32_t length = GetWindowTextLengthW(handle);
+				WCHAR* text = reinterpret_cast<WCHAR*>(alloca(sizeof(WCHAR) * (length + 1)));
+				GetWindowTextW(handle, text, length + 1);
+				text[length] = L'\0';
+
+				HFONT oldFont = (HFONT)SelectObject(dc, reinterpret_cast<HGDIOBJ>(self->GetFont()->m_Handle));
+
+				SetTextColor(dc, RGB(0, 255, 0));
+				SetBkMode(dc, TRANSPARENT);
+				DrawTextW(dc, text, -1, &rc, self->IsCentered() ? (DT_SINGLELINE | DT_CENTER | DT_VCENTER) : (DT_SINGLELINE | DT_LEFT));
+				
+				SelectObject(dc, oldFont);
+				EndPaint(handle, &ps);
+			} break;
+		}
+
+		return DefWindowProcW(handle, msg, wp, lp);
+	}
+
 	Text::Text(const std::wstring& text, Vec2i size, Vec2i pos, Control* parent) :
 		Control(text, size, pos, parent)
 	{
+		static const wchar_t* className = L"Text";
+
+		if (s_Class.cbSize == 0)
+		{
+			HINSTANCE instance = reinterpret_cast<HINSTANCE>(GetModuleHandle(nullptr));
+
+			s_Class.cbSize = sizeof(WNDCLASSEXW);
+			s_Class.hInstance = instance;
+			s_Class.lpszClassName = className;
+			s_Class.cbClsExtra = 0;
+			s_Class.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+			s_Class.lpfnWndProc = Text::s_Procedure;
+
+			RegisterClassExW(&s_Class);
+			GetError(L"Text.RegisterClassExW");
+		}
+
 		m_Handle = CreateWindowExW(
 			0,
-			L"Static",
+			className,
 			static_cast<LPCWSTR>(text.c_str()),
 			WS_VISIBLE | (parent ? WS_CHILD : 0),
 			pos.x,
@@ -51,24 +107,32 @@ namespace mango
 			0
 		);
 		GetError(L"Text.CreateWindowExW");
+
+		SetWindowLongPtrW(m_Handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+	}
+
+	void Text::SetCentered(bool center)
+	{
+		m_Center = true;
+		InvalidateRect(m_Handle, nullptr, TRUE);
 	}
 
 	Button::Button(const std::wstring& text, Vec2i size, Vec2i pos, Control* parent) :
 		Control(text, size, pos, parent)
 	{
 		m_Handle = CreateWindowExW(
-					0,
-					L"Button",
-					static_cast<LPCWSTR>(text.c_str()),
-					WS_VISIBLE | (parent ? WS_CHILD : 0),
-					pos.x,
-					pos.y,
-					size.x,
-					size.y,
-					parent ? parent->m_Handle : 0,
-					nullptr,
-					GetModuleHandleW(nullptr),
-					0
+			0,
+			L"Button",
+			static_cast<LPCWSTR>(text.c_str()),
+			WS_VISIBLE | (parent ? WS_CHILD : 0),
+			pos.x,
+			pos.y,
+			size.x,
+			size.y,
+			parent ? parent->m_Handle : 0,
+			nullptr,
+			GetModuleHandleW(nullptr),
+			0
 		);
 		GetError(L"Button.CreateWindowExW");
 	}
@@ -90,8 +154,11 @@ namespace mango
 
 				PAINTSTRUCT ps;
 				RECT rc;
-				HDC dc = BeginPaint(handle, &ps);
 				GetClientRect(handle, &rc);
+
+				InvalidateRect(handle, &rc, TRUE);
+
+				HDC dc = BeginPaint(handle, &ps);
 
 				//FillRect(dc, &rc, reinterpret_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
 
@@ -116,23 +183,6 @@ namespace mango
 				);
 				memcpy(bits, self->m_Image.GetData(), imageSize.X * imageSize.Y * 4);
 
-				//void* bits2 = nullptr;
-				//StretchDIBits(
-				//	dc,
-				//	0,
-				//	0,
-				//	self->GetSize().X,
-				//	self->GetSize().Y,
-				//	0,
-				//	0,
-				//	self->m_Image.GetSize().X,
-				//	self->m_Image.GetSize().Y,
-				//	&bits2,
-				//	&bmi,
-				//	DIB_RGB_COLORS,
-				//	PATPAINT
-				//);
-
 				HBITMAP old = reinterpret_cast<HBITMAP>(SelectObject(memDC, dib));
 
 				BLENDFUNCTION bf = {
@@ -155,7 +205,6 @@ namespace mango
 				SelectObject(memDC, old);
 				DeleteObject(dib);
 				DeleteDC(memDC);
-
 			} break;
 		}
 
@@ -167,7 +216,6 @@ namespace mango
 	{
 		static const wchar_t* className = L"TextImage";
 
-		// #TODO: Make this more robust.
 		if (s_Class.cbSize == 0)
 		{
 			HINSTANCE instance = reinterpret_cast<HINSTANCE>(GetModuleHandle(nullptr));
@@ -180,7 +228,7 @@ namespace mango
 			s_Class.lpfnWndProc = TextImage::s_Procedure;
 
 			RegisterClassExW(&s_Class);
-			GetError(L"Window.RegisterClassExW");
+			GetError(L"TextImage.RegisterClassExW");
 		}
 
 		m_Handle = CreateWindowExW(
