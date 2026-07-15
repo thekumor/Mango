@@ -19,6 +19,7 @@ namespace mango
 			apiClass.hInstance = instance;
 			apiClass.lpszClassName = className;
 			apiClass.cbClsExtra = 0;
+			apiClass.hIcon = LoadIconW(instance, MAKEINTRESOURCE(IDI_ICON1));
 			apiClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
 			apiClass.lpfnWndProc = Window::s_Procedure;
 

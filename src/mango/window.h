@@ -11,6 +11,7 @@
 // Mango
 #include <mango/controls.h>
 #include <mango/image.h>
+#include <mango/resource.h>
 
 // WinAPI
 #include <windows.h>

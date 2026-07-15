@@ -1,3 +1,11 @@
+/* ================================================================
+*
+*	Read/write to a file.
+*
+*	#Authors: The Kumor
+*
+* ================================================================ */
+
 #pragma once
 
 // Mango
@@ -5,17 +13,20 @@
 
 // STL
 #include <fstream>
+#include <optional>
 
 namespace mango
 {
-
-	enum class FileMode : std::ios::openmode
+	enum class FileMode : std::uint32_t
 	{
 		None = 0,
-		Read = std::ios::in,
-		Write = std::ios::out,
-		Append = std::ios::app
+		Read = 1 << 0,
+		Write = 1 << 1,
+		Append = 1 << 2,
 	};
+	
+	FileMode operator|(FileMode lhs, FileMode rhs);
+	bool operator&(FileMode lhs, FileMode rhs);
 
 	class File
 	{
@@ -25,10 +36,14 @@ namespace mango
 
 		FileMode GetMode() const { return m_Mode; }
 		std::wstring GetPath() const { return m_Path; }
+		std::optional<WCHAR*> Read();
+		bool Write(WCHAR* what, size_t size);
+		bool Write(const std::wstring& what);
 		void Open(const std::wstring& path, FileMode mode);
 		void Close();
 
 	private:
+
 		std::wstring m_Path;
 		HANDLE m_Handle = nullptr;
 		FileMode m_Mode = FileMode::None;
