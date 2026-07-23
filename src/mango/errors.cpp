@@ -5,6 +5,7 @@ namespace mango
 
 	DWORD GetError(const std::wstring& info)
 	{
+#ifdef _DEBUG
 		DWORD error = GetLastError();
 
 		if (error)
@@ -25,6 +26,9 @@ namespace mango
 		}
 
 		return error;
+#else
+		return static_cast<DWORD>(0);
+#endif
 	}
 
 	void ForceError(const std::wstring& info)

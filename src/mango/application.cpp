@@ -35,17 +35,28 @@ namespace mango
 		series->SetFont(&subHeaderFont);
 		series->SetCentered(true);
 
-		for (std::int32_t i = 0; i < 15; i++)
-		{
-			Button* text = m_Window->AddChild<Button>(std::wstring(L"Series no ") + std::to_wstring(i + 1), { 0.25f, 0.05f }, { 0.05f, 0.05f * i + 0.12f });
-			text->SetFont(&mainFont);
-		}
-
 		Button* up = m_Window->AddChild<Button>(L"↑", { 0.04f, 0.05f }, { 0.32f, 0.15f });
 		up->SetFont(&arrowFont);
 
 		Button* down = m_Window->AddChild<Button>(L"↓", { 0.04f, 0.05f }, { 0.32f, 0.21f });
 		down->SetFont(&arrowFont);
+
+		Directory dataDir(L"data/*");
+
+		for (std::int32_t i = 0; i < 15; i++)
+		{
+			std::wstring fileName = L"";
+
+			if (dataDir.GetFiles().size() > i)
+				fileName = dataDir.GetFiles()[i].GetName();
+
+			Button* text = m_Window->AddChild<Button>(fileName, {0.25f, 0.05f}, {0.05f, 0.05f * i + 0.12f});
+			text->SetFont(&mainFont);
+		}
+
+		File testFile(L"data/1.ini", FileMode::Read);
+		INIData data;
+		data.ConstructFromFile(&testFile);
 
 		MSG msg = { 0 };
 		while (GetMessageW(&msg, nullptr, 0, 0))
